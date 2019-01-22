@@ -1,0 +1,38 @@
+type Query {
+  pokemon(number: Int!): Pokemon
+  pokemons: List!
+  types: [Type]!
+}
+
+type Mutation {
+  postType(name: String!, color: String!): Type!
+  postPokemon(
+    number: Int!
+    name: String!
+    image: String!
+    description: String!
+    types: [Type!]!
+    evolutions: [Pokemon]!
+  ): Pokemon!
+}
+
+type Type {
+  id: ID!
+  name: String!
+  color: String!
+}
+
+type Pokemon {
+  id: ID!
+  number: Int!
+  name: String!
+  image: String!
+  description: String!
+  types: [Type!]!
+  evolutions: [Pokemon]!
+}
+
+type List {
+  pokemons: [Pokemon!]!
+  count: Int!
+}
