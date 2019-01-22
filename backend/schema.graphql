@@ -11,8 +11,8 @@ type Mutation {
     name: String!
     image: String!
     description: String!
-    types: [Type!]!
-    evolutions: [Pokemon]!
+    types: [ID!]!
+    evolutions: [ID]!
   ): Pokemon!
 }
 
