@@ -11,5 +11,5 @@ type Pokemon {
   image: String!
   description: String!
   types: [Type!]!
-  evolutions: [Pokemon]!
+  evolutions: [Pokemon]! @default(value: [])
 }

@@ -33,6 +33,6 @@ type Pokemon {
 }
 
 type List {
-  pokemons: [Pokemon!]!
+  list: [Pokemon!]!
   count: Int!
 }
