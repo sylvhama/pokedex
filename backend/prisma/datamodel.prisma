@@ -1,0 +1,15 @@
+type Type {
+  id: ID! @unique
+  name: String!
+  color: String!
+}
+
+type Pokemon {
+  id: ID! @unique
+  number: Int! @unique
+  name: String!
+  image: String!
+  description: String!
+  types: [Type!]!
+  evolutions: [Pokemon]!
+}
