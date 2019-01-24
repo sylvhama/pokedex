@@ -7,7 +7,7 @@ async function pokemons(parent, args, context) {
     })
     .aggregate()
     .count();
-  const pokemons = await context.prisma.pokemons({
+  const list = await context.prisma.pokemons({
     where: {
       name_contains: args.filter
     },
@@ -17,7 +17,7 @@ async function pokemons(parent, args, context) {
   });
   return {
     count,
-    pokemons
+    list
   };
 }
 
