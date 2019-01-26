@@ -1,3 +1,5 @@
+# import * from './prisma/generated/prisma.graphql'
+
 type Query {
   pokemon(number: Int!): Pokemon
   pokemons: List!
@@ -14,22 +16,6 @@ type Mutation {
     types: [ID!]!
     evolutions: [ID]!
   ): Pokemon!
-}
-
-type Type {
-  id: ID!
-  name: String!
-  color: String!
-}
-
-type Pokemon {
-  id: ID!
-  number: Int!
-  name: String!
-  image: String!
-  description: String!
-  types: [Type!]!
-  evolutions: [Pokemon]!
 }
 
 type List {
