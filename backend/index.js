@@ -1,3 +1,5 @@
+require("dotenv").config({path: '.env'});
+
 const { GraphQLServer } = require("graphql-yoga");
 const { prisma } = require("./prisma/generated/prisma-client");
 
@@ -12,6 +14,11 @@ const resolvers = {
 };
 
 const server = new GraphQLServer({
+  port: process.env.PORT,
+  cors: {
+    credentials: true,
+    origin: process.env.FRONTEND_URL
+  },
   typeDefs: "./backend/schema.graphql",
   resolvers,
   context: request => ({
@@ -19,4 +26,4 @@ const server = new GraphQLServer({
     prisma
   })
 });
-server.start(() => console.log(`Server is running on http://localhost:4000`));
+server.start(deets => console.log(`Server is running on http://localhost:${deets.port}`));

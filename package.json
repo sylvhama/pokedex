@@ -12,6 +12,7 @@
   "author": "Sylvain Hamann",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^6.2.0",
     "graphql-yoga": "^1.17.0",
     "prisma-client-lib": "^1.24.0"
   },
