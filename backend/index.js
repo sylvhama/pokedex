@@ -1,4 +1,4 @@
-require("dotenv").config({path: '.env'});
+require("dotenv").config({ path: "./backend/.env" });
 
 const { GraphQLServer } = require("graphql-yoga");
 const { prisma } = require("./prisma/generated");
@@ -26,4 +26,6 @@ const server = new GraphQLServer({
     prisma
   })
 });
-server.start(deets => console.log(`Server is running on http://localhost:${deets.port}`));
+server.start(deets =>
+  console.log(`Server is running on http://localhost:${deets.port}`)
+);
