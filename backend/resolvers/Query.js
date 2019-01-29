@@ -11,9 +11,7 @@ async function pokemons(parent, args, context) {
     where: {
       name_contains: args.filter
     },
-    skip: args.skip,
-    first: args.first,
-    orderBy: args.orderBy
+    orderBy: "number_ASC"
   });
   return {
     count,
@@ -22,7 +20,6 @@ async function pokemons(parent, args, context) {
 }
 
 async function pokemon(parent, args, context) {
-  if (!args.number) return null;
   const pokemon = await context.prisma.pokemon({
     number: args.number
   });
@@ -30,7 +27,9 @@ async function pokemon(parent, args, context) {
 }
 
 async function types(parent, args, context) {
-  const types = await context.prisma.types();
+  const types = await context.prisma.types({
+    orderBy: "name_ASC"
+  });
   return types;
 }
 

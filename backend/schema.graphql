@@ -8,6 +8,8 @@ type Query {
 
 type Mutation {
   postType(name: String!, color: String!): Type!
+  updateType(id: ID!, name: String!, color: String!): Type!
+  deleteType(id: ID!): Type!
   postPokemon(
     number: Int!
     name: String!
@@ -16,6 +18,16 @@ type Mutation {
     types: [ID!]!
     evolutions: [ID]!
   ): Pokemon!
+  updatePokemon(
+    id: ID!
+    number: Int!
+    name: String!
+    image: String!
+    description: String!
+    types: [ID!]!
+    evolutions: [ID]!
+  ): Pokemon!
+  deletePokemon(id: ID!): Pokemon!
 }
 
 type List {

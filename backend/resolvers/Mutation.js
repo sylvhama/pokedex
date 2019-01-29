@@ -5,6 +5,24 @@ function postType(parent, args, context) {
   });
 }
 
+function updateType(parent, args, context) {
+  return context.prisma.updateType({
+    data: {
+      name: args.name,
+      color: args.color
+    },
+    where: {
+      id: args.id
+    }
+  });
+}
+
+function deleteType(parent, args, context) {
+  return context.prisma.deleteType({
+    id: args.id
+  });
+}
+
 function postPokemon(parent, args, context) {
   return context.prisma.createPokemon({
     ...args,
@@ -21,7 +39,26 @@ function postPokemon(parent, args, context) {
   });
 }
 
+function updatePokemon(parent, { id, ...data }, context) {
+  return context.prisma.updatePokemon({
+    data,
+    where: {
+      id: id
+    }
+  });
+}
+
+function deletePokemon(parent, args, context) {
+  return context.prisma.deletePokemon({
+    id: args.id
+  });
+}
+
 module.exports = {
   postType,
-  postPokemon
+  updateType,
+  deleteType,
+  postPokemon,
+  updatePokemon,
+  deletePokemon
 };
