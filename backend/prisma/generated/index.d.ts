@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export interface Exists {
   pokemon: (where?: PokemonWhereInput) => Promise<boolean>;
   type: (where?: TypeWhereInput) => Promise<boolean>;
+  user: (where?: UserWhereInput) => Promise<boolean>;
 }
 
 export interface Node {}
@@ -75,6 +76,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => TypeConnectionPromise;
+  user: (where: UserWhereUniqueInput) => UserPromise;
+  users: (args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<User>;
+  usersConnection: (args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => UserConnectionPromise;
   node: (args: { id: ID_Output }) => Node;
 
   /**
@@ -113,6 +133,22 @@ export interface Prisma {
   }) => TypePromise;
   deleteType: (where: TypeWhereUniqueInput) => TypePromise;
   deleteManyTypes: (where?: TypeWhereInput) => BatchPayloadPromise;
+  createUser: (data: UserCreateInput) => UserPromise;
+  updateUser: (args: {
+    data: UserUpdateInput;
+    where: UserWhereUniqueInput;
+  }) => UserPromise;
+  updateManyUsers: (args: {
+    data: UserUpdateManyMutationInput;
+    where?: UserWhereInput;
+  }) => BatchPayloadPromise;
+  upsertUser: (args: {
+    where: UserWhereUniqueInput;
+    create: UserCreateInput;
+    update: UserUpdateInput;
+  }) => UserPromise;
+  deleteUser: (where: UserWhereUniqueInput) => UserPromise;
+  deleteManyUsers: (where?: UserWhereInput) => BatchPayloadPromise;
 
   /**
    * Subscriptions
@@ -128,6 +164,9 @@ export interface Subscription {
   type: (
     where?: TypeSubscriptionWhereInput
   ) => TypeSubscriptionPayloadSubscription;
+  user: (
+    where?: UserSubscriptionWhereInput
+  ) => UserSubscriptionPayloadSubscription;
 }
 
 export interface ClientConstructor<T> {
@@ -161,6 +200,18 @@ export type PokemonOrderByInput =
   | "image_DESC"
   | "description_ASC"
   | "description_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type UserOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "email_ASC"
+  | "email_DESC"
+  | "password_ASC"
+  | "password_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -244,37 +295,6 @@ export interface TypeWhereInput {
   NOT?: TypeWhereInput[] | TypeWhereInput;
 }
 
-export interface PokemonCreateInput {
-  number: Int;
-  name: String;
-  image: String;
-  description: String;
-  types?: TypeCreateManyInput;
-  evolutions?: PokemonCreateManyInput;
-}
-
-export interface PokemonUpdateManyInput {
-  create?: PokemonCreateInput[] | PokemonCreateInput;
-  update?:
-    | PokemonUpdateWithWhereUniqueNestedInput[]
-    | PokemonUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | PokemonUpsertWithWhereUniqueNestedInput[]
-    | PokemonUpsertWithWhereUniqueNestedInput;
-  delete?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
-  connect?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
-  disconnect?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
-  deleteMany?: PokemonScalarWhereInput[] | PokemonScalarWhereInput;
-  updateMany?:
-    | PokemonUpdateManyWithWhereNestedInput[]
-    | PokemonUpdateManyWithWhereNestedInput;
-}
-
-export interface TypeCreateManyInput {
-  create?: TypeCreateInput[] | TypeCreateInput;
-  connect?: TypeWhereUniqueInput[] | TypeWhereUniqueInput;
-}
-
 export interface TypeScalarWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
@@ -321,106 +341,6 @@ export interface TypeScalarWhereInput {
   AND?: TypeScalarWhereInput[] | TypeScalarWhereInput;
   OR?: TypeScalarWhereInput[] | TypeScalarWhereInput;
   NOT?: TypeScalarWhereInput[] | TypeScalarWhereInput;
-}
-
-export interface TypeCreateInput {
-  name: String;
-  color: String;
-}
-
-export interface PokemonSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: PokemonWhereInput;
-  AND?: PokemonSubscriptionWhereInput[] | PokemonSubscriptionWhereInput;
-  OR?: PokemonSubscriptionWhereInput[] | PokemonSubscriptionWhereInput;
-  NOT?: PokemonSubscriptionWhereInput[] | PokemonSubscriptionWhereInput;
-}
-
-export interface PokemonCreateManyInput {
-  create?: PokemonCreateInput[] | PokemonCreateInput;
-  connect?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
-}
-
-export interface TypeUpdateInput {
-  name?: String;
-  color?: String;
-}
-
-export interface PokemonUpdateInput {
-  number?: Int;
-  name?: String;
-  image?: String;
-  description?: String;
-  types?: TypeUpdateManyInput;
-  evolutions?: PokemonUpdateManyInput;
-}
-
-export interface PokemonUpdateManyDataInput {
-  number?: Int;
-  name?: String;
-  image?: String;
-  description?: String;
-}
-
-export interface PokemonUpdateDataInput {
-  number?: Int;
-  name?: String;
-  image?: String;
-  description?: String;
-  types?: TypeUpdateManyInput;
-  evolutions?: PokemonUpdateManyInput;
-}
-
-export interface PokemonUpdateManyWithWhereNestedInput {
-  where: PokemonScalarWhereInput;
-  data: PokemonUpdateManyDataInput;
-}
-
-export interface TypeUpdateWithWhereUniqueNestedInput {
-  where: TypeWhereUniqueInput;
-  data: TypeUpdateDataInput;
-}
-
-export interface PokemonUpsertWithWhereUniqueNestedInput {
-  where: PokemonWhereUniqueInput;
-  update: PokemonUpdateDataInput;
-  create: PokemonCreateInput;
-}
-
-export interface TypeUpdateDataInput {
-  name?: String;
-  color?: String;
-}
-
-export interface TypeSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: TypeWhereInput;
-  AND?: TypeSubscriptionWhereInput[] | TypeSubscriptionWhereInput;
-  OR?: TypeSubscriptionWhereInput[] | TypeSubscriptionWhereInput;
-  NOT?: TypeSubscriptionWhereInput[] | TypeSubscriptionWhereInput;
-}
-
-export interface PokemonUpdateManyMutationInput {
-  number?: Int;
-  name?: String;
-  image?: String;
-  description?: String;
-}
-
-export interface TypeUpdateManyDataInput {
-  name?: String;
-  color?: String;
-}
-
-export interface TypeUpdateManyWithWhereNestedInput {
-  where: TypeScalarWhereInput;
-  data: TypeUpdateManyDataInput;
 }
 
 export interface PokemonWhereInput {
@@ -499,18 +419,144 @@ export interface PokemonWhereInput {
   NOT?: PokemonWhereInput[] | PokemonWhereInput;
 }
 
-export interface PokemonUpdateWithWhereUniqueNestedInput {
-  where: PokemonWhereUniqueInput;
-  data: PokemonUpdateDataInput;
+export interface PokemonUpdateManyWithWhereNestedInput {
+  where: PokemonScalarWhereInput;
+  data: PokemonUpdateManyDataInput;
+}
+
+export interface PokemonUpdateManyInput {
+  create?: PokemonCreateInput[] | PokemonCreateInput;
+  update?:
+    | PokemonUpdateWithWhereUniqueNestedInput[]
+    | PokemonUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | PokemonUpsertWithWhereUniqueNestedInput[]
+    | PokemonUpsertWithWhereUniqueNestedInput;
+  delete?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
+  connect?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
+  disconnect?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
+  deleteMany?: PokemonScalarWhereInput[] | PokemonScalarWhereInput;
+  updateMany?:
+    | PokemonUpdateManyWithWhereNestedInput[]
+    | PokemonUpdateManyWithWhereNestedInput;
+}
+
+export interface TypeUpdateManyWithWhereNestedInput {
+  where: TypeScalarWhereInput;
+  data: TypeUpdateManyDataInput;
+}
+
+export interface TypeSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: TypeWhereInput;
+  AND?: TypeSubscriptionWhereInput[] | TypeSubscriptionWhereInput;
+  OR?: TypeSubscriptionWhereInput[] | TypeSubscriptionWhereInput;
+  NOT?: TypeSubscriptionWhereInput[] | TypeSubscriptionWhereInput;
+}
+
+export interface PokemonCreateInput {
+  number: Int;
+  name: String;
+  image: String;
+  description: String;
+  types?: TypeCreateManyInput;
+  evolutions?: PokemonCreateManyInput;
 }
 
 export type TypeWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface TypeUpdateManyMutationInput {
+export interface TypeCreateManyInput {
+  create?: TypeCreateInput[] | TypeCreateInput;
+  connect?: TypeWhereUniqueInput[] | TypeWhereUniqueInput;
+}
+
+export interface UserUpdateInput {
+  email?: String;
+  password?: String;
+}
+
+export interface TypeCreateInput {
+  name: String;
+  color: String;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  email?: String;
+}>;
+
+export interface PokemonCreateManyInput {
+  create?: PokemonCreateInput[] | PokemonCreateInput;
+  connect?: PokemonWhereUniqueInput[] | PokemonWhereUniqueInput;
+}
+
+export interface UserWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  email?: String;
+  email_not?: String;
+  email_in?: String[] | String;
+  email_not_in?: String[] | String;
+  email_lt?: String;
+  email_lte?: String;
+  email_gt?: String;
+  email_gte?: String;
+  email_contains?: String;
+  email_not_contains?: String;
+  email_starts_with?: String;
+  email_not_starts_with?: String;
+  email_ends_with?: String;
+  email_not_ends_with?: String;
+  password?: String;
+  password_not?: String;
+  password_in?: String[] | String;
+  password_not_in?: String[] | String;
+  password_lt?: String;
+  password_lte?: String;
+  password_gt?: String;
+  password_gte?: String;
+  password_contains?: String;
+  password_not_contains?: String;
+  password_starts_with?: String;
+  password_not_starts_with?: String;
+  password_ends_with?: String;
+  password_not_ends_with?: String;
+  AND?: UserWhereInput[] | UserWhereInput;
+  OR?: UserWhereInput[] | UserWhereInput;
+  NOT?: UserWhereInput[] | UserWhereInput;
+}
+
+export interface PokemonUpdateInput {
+  number?: Int;
   name?: String;
-  color?: String;
+  image?: String;
+  description?: String;
+  types?: TypeUpdateManyInput;
+  evolutions?: PokemonUpdateManyInput;
+}
+
+export interface PokemonUpdateManyMutationInput {
+  number?: Int;
+  name?: String;
+  image?: String;
+  description?: String;
 }
 
 export interface PokemonScalarWhereInput {
@@ -583,71 +629,286 @@ export interface PokemonScalarWhereInput {
   NOT?: PokemonScalarWhereInput[] | PokemonScalarWhereInput;
 }
 
+export interface UserSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+}
+
+export interface TypeUpdateWithWhereUniqueNestedInput {
+  where: TypeWhereUniqueInput;
+  data: TypeUpdateDataInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  email?: String;
+  password?: String;
+}
+
+export interface TypeUpdateDataInput {
+  name?: String;
+  color?: String;
+}
+
+export interface TypeUpdateManyMutationInput {
+  name?: String;
+  color?: String;
+}
+
+export interface TypeUpdateManyDataInput {
+  name?: String;
+  color?: String;
+}
+
+export interface PokemonUpdateWithWhereUniqueNestedInput {
+  where: PokemonWhereUniqueInput;
+  data: PokemonUpdateDataInput;
+}
+
+export interface PokemonUpdateDataInput {
+  number?: Int;
+  name?: String;
+  image?: String;
+  description?: String;
+  types?: TypeUpdateManyInput;
+  evolutions?: PokemonUpdateManyInput;
+}
+
+export interface PokemonUpsertWithWhereUniqueNestedInput {
+  where: PokemonWhereUniqueInput;
+  update: PokemonUpdateDataInput;
+  create: PokemonCreateInput;
+}
+
+export interface TypeUpdateInput {
+  name?: String;
+  color?: String;
+}
+
+export interface UserCreateInput {
+  email: String;
+  password: String;
+}
+
+export interface PokemonSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: PokemonWhereInput;
+  AND?: PokemonSubscriptionWhereInput[] | PokemonSubscriptionWhereInput;
+  OR?: PokemonSubscriptionWhereInput[] | PokemonSubscriptionWhereInput;
+  NOT?: PokemonSubscriptionWhereInput[] | PokemonSubscriptionWhereInput;
+}
+
+export interface PokemonUpdateManyDataInput {
+  number?: Int;
+  name?: String;
+  image?: String;
+  description?: String;
+}
+
 export interface NodeNode {
   id: ID_Output;
 }
 
-export interface TypePreviousValues {
+export interface UserPreviousValues {
+  id: ID_Output;
+  email: String;
+  password: String;
+}
+
+export interface UserPreviousValuesPromise
+  extends Promise<UserPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+}
+
+export interface UserPreviousValuesSubscription
+  extends Promise<AsyncIterator<UserPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+}
+
+export interface TypeEdge {
+  node: Type;
+  cursor: String;
+}
+
+export interface TypeEdgePromise extends Promise<TypeEdge>, Fragmentable {
+  node: <T = TypePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface TypeEdgeSubscription
+  extends Promise<AsyncIterator<TypeEdge>>,
+    Fragmentable {
+  node: <T = TypeSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface PokemonConnection {
+  pageInfo: PageInfo;
+  edges: PokemonEdge[];
+}
+
+export interface PokemonConnectionPromise
+  extends Promise<PokemonConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PokemonEdge>>() => T;
+  aggregate: <T = AggregatePokemonPromise>() => T;
+}
+
+export interface PokemonConnectionSubscription
+  extends Promise<AsyncIterator<PokemonConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PokemonEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePokemonSubscription>() => T;
+}
+
+export interface TypeConnection {
+  pageInfo: PageInfo;
+  edges: TypeEdge[];
+}
+
+export interface TypeConnectionPromise
+  extends Promise<TypeConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<TypeEdge>>() => T;
+  aggregate: <T = AggregateTypePromise>() => T;
+}
+
+export interface TypeConnectionSubscription
+  extends Promise<AsyncIterator<TypeConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TypeEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTypeSubscription>() => T;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePokemon {
+  count: Int;
+}
+
+export interface AggregatePokemonPromise
+  extends Promise<AggregatePokemon>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePokemonSubscription
+  extends Promise<AsyncIterator<AggregatePokemon>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Type {
   id: ID_Output;
   name: String;
   color: String;
 }
 
-export interface TypePreviousValuesPromise
-  extends Promise<TypePreviousValues>,
-    Fragmentable {
+export interface TypePromise extends Promise<Type>, Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   color: () => Promise<String>;
 }
 
-export interface TypePreviousValuesSubscription
-  extends Promise<AsyncIterator<TypePreviousValues>>,
+export interface TypeSubscription
+  extends Promise<AsyncIterator<Type>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   color: () => Promise<AsyncIterator<String>>;
 }
 
-export interface BatchPayload {
-  count: Long;
+export interface AggregateUser {
+  count: Int;
 }
 
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
     Fragmentable {
-  count: () => Promise<Long>;
+  count: () => Promise<Int>;
 }
 
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface PokemonSubscriptionPayload {
-  mutation: MutationType;
-  node: Pokemon;
-  updatedFields: String[];
-  previousValues: PokemonPreviousValues;
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
 }
 
-export interface PokemonSubscriptionPayloadPromise
-  extends Promise<PokemonSubscriptionPayload>,
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
     Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = PokemonPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = PokemonPreviousValuesPromise>() => T;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
 }
 
-export interface PokemonSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<PokemonSubscriptionPayload>>,
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = PokemonSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = PokemonPreviousValuesSubscription>() => T;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
+}
+
+export interface UserEdge {
+  node: User;
+  cursor: String;
+}
+
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
+    Fragmentable {
+  node: <T = UserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface TypeSubscriptionPayload {
@@ -675,40 +936,45 @@ export interface TypeSubscriptionPayloadSubscription
   previousValues: <T = TypePreviousValuesSubscription>() => T;
 }
 
-export interface Type {
-  id: ID_Output;
-  name: String;
-  color: String;
+export interface PokemonSubscriptionPayload {
+  mutation: MutationType;
+  node: Pokemon;
+  updatedFields: String[];
+  previousValues: PokemonPreviousValues;
 }
 
-export interface TypePromise extends Promise<Type>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  color: () => Promise<String>;
-}
-
-export interface TypeSubscription
-  extends Promise<AsyncIterator<Type>>,
+export interface PokemonSubscriptionPayloadPromise
+  extends Promise<PokemonSubscriptionPayload>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  color: () => Promise<AsyncIterator<String>>;
+  mutation: () => Promise<MutationType>;
+  node: <T = PokemonPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PokemonPreviousValuesPromise>() => T;
 }
 
-export interface TypeEdge {
-  node: Type;
+export interface PokemonSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PokemonSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PokemonSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PokemonPreviousValuesSubscription>() => T;
+}
+
+export interface PokemonEdge {
+  node: Pokemon;
   cursor: String;
 }
 
-export interface TypeEdgePromise extends Promise<TypeEdge>, Fragmentable {
-  node: <T = TypePromise>() => T;
+export interface PokemonEdgePromise extends Promise<PokemonEdge>, Fragmentable {
+  node: <T = PokemonPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface TypeEdgeSubscription
-  extends Promise<AsyncIterator<TypeEdge>>,
+export interface PokemonEdgeSubscription
+  extends Promise<AsyncIterator<PokemonEdge>>,
     Fragmentable {
-  node: <T = TypeSubscription>() => T;
+  node: <T = PokemonSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -738,50 +1004,6 @@ export interface PokemonPreviousValuesSubscription
   name: () => Promise<AsyncIterator<String>>;
   image: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
-}
-
-export interface PokemonConnection {
-  pageInfo: PageInfo;
-  edges: PokemonEdge[];
-}
-
-export interface PokemonConnectionPromise
-  extends Promise<PokemonConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<PokemonEdge>>() => T;
-  aggregate: <T = AggregatePokemonPromise>() => T;
-}
-
-export interface PokemonConnectionSubscription
-  extends Promise<AsyncIterator<PokemonConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<PokemonEdgeSubscription>>>() => T;
-  aggregate: <T = AggregatePokemonSubscription>() => T;
-}
-
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface Pokemon {
@@ -846,25 +1068,87 @@ export interface PokemonSubscription
   }) => T;
 }
 
-export interface TypeConnection {
-  pageInfo: PageInfo;
-  edges: TypeEdge[];
+export interface BatchPayload {
+  count: Long;
 }
 
-export interface TypeConnectionPromise
-  extends Promise<TypeConnection>,
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<TypeEdge>>() => T;
-  aggregate: <T = AggregateTypePromise>() => T;
+  count: () => Promise<Long>;
 }
 
-export interface TypeConnectionSubscription
-  extends Promise<AsyncIterator<TypeConnection>>,
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<TypeEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateTypeSubscription>() => T;
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface User {
+  id: ID_Output;
+  email: String;
+  password: String;
+}
+
+export interface UserPromise extends Promise<User>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+}
+
+export interface UserSubscription
+  extends Promise<AsyncIterator<User>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+}
+
+export interface TypePreviousValues {
+  id: ID_Output;
+  name: String;
+  color: String;
+}
+
+export interface TypePreviousValuesPromise
+  extends Promise<TypePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  color: () => Promise<String>;
+}
+
+export interface TypePreviousValuesSubscription
+  extends Promise<AsyncIterator<TypePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  color: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserSubscriptionPayload {
+  mutation: MutationType;
+  node: User;
+  updatedFields: String[];
+  previousValues: UserPreviousValues;
+}
+
+export interface UserSubscriptionPayloadPromise
+  extends Promise<UserSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = UserPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserPreviousValuesPromise>() => T;
+}
+
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
 export interface AggregateType {
@@ -883,38 +1167,17 @@ export interface AggregateTypeSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface PokemonEdge {
-  node: Pokemon;
-  cursor: String;
-}
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
+*/
+export type Int = number;
 
-export interface PokemonEdgePromise extends Promise<PokemonEdge>, Fragmentable {
-  node: <T = PokemonPromise>() => T;
-  cursor: () => Promise<String>;
-}
+export type Long = string;
 
-export interface PokemonEdgeSubscription
-  extends Promise<AsyncIterator<PokemonEdge>>,
-    Fragmentable {
-  node: <T = PokemonSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregatePokemon {
-  count: Int;
-}
-
-export interface AggregatePokemonPromise
-  extends Promise<AggregatePokemon>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregatePokemonSubscription
-  extends Promise<AsyncIterator<AggregatePokemon>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
+/*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
 
 /*
 The `Boolean` scalar type represents `true` or `false`.
@@ -922,22 +1185,10 @@ The `Boolean` scalar type represents `true` or `false`.
 export type Boolean = boolean;
 
 /*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
-
-export type Long = string;
-
-/*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
 export type ID_Input = string | number;
 export type ID_Output = string;
-
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
-*/
-export type Int = number;
 
 /**
  * Model Metadata
@@ -950,6 +1201,10 @@ export const models: Model[] = [
   },
   {
     name: "Type",
+    embedded: false
+  },
+  {
+    name: "User",
     embedded: false
   }
 ];

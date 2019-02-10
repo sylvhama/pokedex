@@ -7,6 +7,8 @@ type Query {
 }
 
 type Mutation {
+  signup(email: String!, password: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
   postType(name: String!, color: String!): Type!
   updateType(id: ID!, name: String!, color: String!): Type!
   deleteType(id: ID!): Type!
@@ -33,4 +35,9 @@ type Mutation {
 type List {
   list: [Pokemon!]!
   count: Int!
+}
+
+type AuthPayload {
+  token: String
+  user: User
 }
