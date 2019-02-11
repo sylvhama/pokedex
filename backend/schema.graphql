@@ -38,6 +38,6 @@ type List {
 }
 
 type AuthPayload {
-  token: String
-  user: User
+  token: String!
+  email: String!
 }

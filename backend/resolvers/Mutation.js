@@ -1,7 +1,6 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { getUserIdOrThrowErrorIfNotAuthenticated } = require('../utils');
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { getUserIdOrThrowErrorIfNotAuthenticated } = require("../utils");
 
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10);
@@ -9,19 +8,19 @@ async function signup(parent, args, context, info) {
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   return {
     token,
-    user,
-  }
+    email: user.email
+  };
 }
 
 async function login(parent, args, context, info) {
-  const user = await context.prisma.user({ email: args.email })
-  const valid = await bcrypt.compare(args.password, user.password)
-  if (!user || !valid) throw new Error('Please check your credentials');
+  const user = await context.prisma.user({ email: args.email });
+  const valid = await bcrypt.compare(args.password, user.password);
+  if (!user || !valid) throw new Error("Please check your credentials");
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   return {
     token,
-    user,
-  }
+    email: user.email
+  };
 }
 
 function postType(parent, args, context) {
