@@ -1,46 +1,47 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { getUserIdOrThrowErrorIfNotAuthenticated } = require('../utils');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { getUserIdOrThrowErrorIfNotAuthenticated } = require("../utils");
 
-
-async function signup(parent, args, context, info) {
-  const password = await bcrypt.hash(args.password, 10);
-  const user = await context.prisma.createUser({ ...args, password });
+async function signup(parent, { input }, context, info) {
+  const password = await bcrypt.hash(input.password, 10);
+  const user = await context.prisma.createUser({
+    input: { email: input.email, password }
+  });
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   return {
     token,
-    user,
-  }
+    user
+  };
 }
 
-async function login(parent, args, context, info) {
-  const user = await context.prisma.user({ email: args.email })
-  const valid = await bcrypt.compare(args.password, user.password)
-  if (!user || !valid) throw new Error('Please check your credentials');
+async function login(parent, { input }, context, info) {
+  const user = await context.prisma.user({ email: input.email });
+  const valid = await bcrypt.compare(input.password, user.password);
+  if (!user || !valid) throw new Error("Please check your credentials");
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   return {
     token,
-    user,
-  }
+    user
+  };
 }
 
-function postType(parent, args, context) {
+function postType(parent, { input }, context) {
   getUserIdOrThrowErrorIfNotAuthenticated(context);
   return context.prisma.createType({
-    name: args.name,
-    color: args.color
+    name: input.name,
+    color: input.color
   });
 }
 
-function updateType(parent, args, context) {
+function updateType(parent, { id, input }, context) {
   getUserIdOrThrowErrorIfNotAuthenticated(context);
   return context.prisma.updateType({
     data: {
-      name: args.name,
-      color: args.color
+      name: input.name,
+      color: input.color
     },
     where: {
-      id: args.id
+      id: id
     }
   });
 }
@@ -52,27 +53,27 @@ function deleteType(parent, args, context) {
   });
 }
 
-function postPokemon(parent, args, context) {
+function postPokemon(parent, { input }, context) {
   getUserIdOrThrowErrorIfNotAuthenticated(context);
   return context.prisma.createPokemon({
-    ...args,
+    ...input,
     types: {
-      connect: args.types.map(typeId => ({
+      connect: input.types.map(typeId => ({
         id: typeId
       }))
     },
     evolutions: {
-      connect: args.evolutions.map(evolutionId => ({
+      connect: input.evolutions.map(evolutionId => ({
         id: evolutionId
       }))
     }
   });
 }
 
-function updatePokemon(parent, { id, ...data }, context) {
+function updatePokemon(parent, { id, input }, context) {
   getUserIdOrThrowErrorIfNotAuthenticated(context);
   return context.prisma.updatePokemon({
-    data,
+    data: input,
     where: {
       id: id
     }

@@ -7,28 +7,13 @@ type Query {
 }
 
 type Mutation {
-  signup(email: String!, password: String!): AuthPayload
-  login(email: String!, password: String!): AuthPayload
-  postType(name: String!, color: String!): Type!
-  updateType(id: ID!, name: String!, color: String!): Type!
+  signup(input: AuthInput!): AuthPayload
+  login(input: AuthInput!): AuthPayload
+  postType(input: TypeInput!): Type!
+  updateType(id: ID!, input: TypeInput!): Type!
   deleteType(id: ID!): Type!
-  postPokemon(
-    number: Int!
-    name: String!
-    image: String!
-    description: String!
-    types: [ID!]!
-    evolutions: [ID]!
-  ): Pokemon!
-  updatePokemon(
-    id: ID!
-    number: Int!
-    name: String!
-    image: String!
-    description: String!
-    types: [ID!]!
-    evolutions: [ID]!
-  ): Pokemon!
+  postPokemon(input: PokemonInput!): Pokemon!
+  updatePokemon(id: ID!, input: PokemonInput!): Pokemon!
   deletePokemon(id: ID!): Pokemon!
 }
 
@@ -40,4 +25,23 @@ type List {
 type AuthPayload {
   token: String
   user: User
+}
+
+input AuthInput {
+  email: String!
+  password: String!
+}
+
+input PokemonInput {
+  number: Int!
+  name: String!
+  image: String!
+  description: String!
+  types: [ID!]!
+  evolutions: [ID]!
+}
+
+input TypeInput {
+  name: String!
+  color: String!
 }
