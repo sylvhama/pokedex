@@ -10,7 +10,7 @@ async function signup(parent, { input }, context, info) {
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   return {
     token,
-    user
+    email: user.email
   };
 }
 
@@ -21,7 +21,7 @@ async function login(parent, { input }, context, info) {
   const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   return {
     token,
-    user
+    email: user.email
   };
 }
 
